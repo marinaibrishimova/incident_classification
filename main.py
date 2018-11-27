@@ -47,7 +47,7 @@ pd.options.display.float_format = '{:.1f}'.format
     is optimal for learning
 """
 df = pd.read_csv("t.csv", sep=",")
-size_of_sample = 2000
+size_of_sample = 20000
 #generate sample synthetic data with the same distribution as the original dataset.
 rows = np.random.choice(df.index.values, size_of_sample)
 incident_dataframe = df.loc[rows]
