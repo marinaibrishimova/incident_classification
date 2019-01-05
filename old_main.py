@@ -25,6 +25,9 @@ import os
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="location_of_your_google_credentials"
 import math
 from IPython import display
+import matplotlib
+matplotlib.use('TkAgg')
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from sklearn import metrics
@@ -80,7 +83,6 @@ def shortans(ans):
 
 def preprocess_features(incident_dataframe):
   """Prepares input features
-
   Args:
     incident_dataframe: A Pandas DataFrame expected to contain data
       from the risidata data set.
@@ -136,7 +138,6 @@ def construct_feature_columns(input_features):
 
 def my_input_fn(features, targets, batch_size=1, shuffle=True, num_epochs=None):
     """Trains a linear regression model of multiple features.
-
     Args:
       features: pandas DataFrame of features
       targets: pandas DataFrame of targets
@@ -194,7 +195,6 @@ def train_linear_classifier_model(
     validation_targets):
 
   """Trains a linear classification model.
-
   Args:
     learning_rate: A `float`, the learning rate.
     steps: A non-zero `int`, the total number of training steps. A training step
@@ -208,12 +208,11 @@ def train_linear_classifier_model(
       `incident_dataframe` to use as input features for validation.
     validation_targets: A `DataFrame` containing exactly one column from
       `incident_dataframe` to use as target for validation.
-
   Returns:
     A `LinearClassifier` object trained on the training data."""
 
 
-  periods = 1
+  periods = 10
   steps_per_period = steps / periods
 
   # Create a linear classifier object.
@@ -239,7 +238,10 @@ def train_linear_classifier_model(
 
   # Train the model
   print ("Training model...")
-
+  print("Training model...")
+  print("LogLoss (on training data):")
+  training_log_losses = []
+  validation_log_losses = []
   for period in range (0, periods):
     # Train the model, starting from the prior state.
     linear_classifier.train(
@@ -253,9 +255,35 @@ def train_linear_classifier_model(
     validation_probabilities = linear_classifier.predict(input_fn=predict_validation_input_fn)
     validation_probabilities = np.array([item['probabilities'] for item in validation_probabilities])
 
-  print ("Model training finished.")
+    training_log_loss = metrics.log_loss(training_targets, training_probabilities)
+    validation_log_loss = metrics.log_loss(validation_targets, validation_probabilities)
+    # Occasionally print the current loss.
+    print("  period %02d : %0.2f" % (period, training_log_loss))
+    # Add the loss metrics from this period to our list.
+    training_log_losses.append(training_log_loss)
+    validation_log_losses.append(validation_log_loss)
 
+    # Get just the probabilities for the positive class.
+    """validation_probabilities = np.array([item['probabilities'][1] for item in validation_probabilities])
+    false_positive_rate, true_positive_rate, thresholds = metrics.roc_curve(
+    validation_targets, validation_probabilities)
+    plt.plot(false_positive_rate, true_positive_rate, label="our model")
+    plt.plot([0, 1], [0, 1], label="random classifier")
+    _ = plt.legend(loc=4)
+    plt.show()"""
+
+  print ("Model training finished.")
   evaluation_metrics = linear_classifier.evaluate(input_fn=predict_validation_input_fn)
+
+  # Output a graph of loss metrics over periods.
+  """plt.ylabel("LogLoss")
+  plt.xlabel("Periods")
+  plt.title("LogLoss vs. Periods")
+  plt.tight_layout()
+  plt.plot(training_log_losses, label="training")
+  plt.plot(validation_log_losses, label="validation")
+  plt.legend()
+  plt.show()"""
 
   print ("AUC on the validation set: %0.2f" % evaluation_metrics['auc'])
   print ("Accuracy on the validation set: %0.2f" % evaluation_metrics['accuracy'])
@@ -273,9 +301,9 @@ def train_linear_classifier_model(
 
 # Train all the model!
 linear_classifier = train_linear_classifier_model(
-    learning_rate=0.005,
+    learning_rate=0.05,
     steps=500,
-    batch_size=10,
+    batch_size=20,
     training_examples=training_examples,
     training_targets=training_targets,
     validation_examples=validation_examples,
