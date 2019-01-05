@@ -49,7 +49,7 @@ pd.options.display.float_format = '{:.1f}'.format
     2. encode features' values for easier testing of which set of features
     is optimal for learning
 """
-df = pd.read_csv("t.csv", sep=",")
+df = pd.read_csv("old_set.csv", sep=",")
 size_of_sample = 20000
 #generate sample synthetic data with the same distribution as the original dataset.
 rows = np.random.choice(df.index.values, size_of_sample)
