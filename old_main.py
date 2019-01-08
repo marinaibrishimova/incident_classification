@@ -9,7 +9,7 @@ The first module has the following functions:
 - generates a larger dataset from a sample dataset of events using Python’s numpy choice function. (only needed if a large dataset is not present)
 - transforms the features of the dataset into the proper format that subsequent modules can use. (Only needed to verify the fitness of different combinations of features as proposed in this paper)
 
-The second module contains a linear regression model as described in [1]
+The second module contains a logistic regression model as described in [1]
 
 The third module contains the interactive incident report form, which is needed to obtain information about the event focuses on the event information gathering by
 - asking for the event description and running this description through Google NLP API in order to obtain a sentiment analysis score and magnitude, which are the first two features that the model needs in order to make a prediction on whether the event is an incident or not.
