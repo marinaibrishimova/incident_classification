@@ -1,5 +1,4 @@
-# incident_classification
-Incident classification using logistic regression and sentiment analysis
+# Discerning Threatening Incidents from Ordinary Events Using Sentiment Analysis and Logistic Regression
 
 There are two different logistic regression machine learning models in this repository, which differ in the number of features.
 The first machine learning model (old_model.py) utilizes the overall sentiment score of a text
