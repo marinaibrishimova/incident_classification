@@ -7,5 +7,3 @@ The second machine learning model is essentially identical to the first except f
 A more rigorous comparison between the two models will be published in an upcoming journal paper.
 
 old_model.py is the companion code to this paper: https://link.springer.com/chapter/10.1007/978-3-030-03712-3_5
-
-A demo of new_model.py is available at https://ai590-1531252834413.appspot.com
